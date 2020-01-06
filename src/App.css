@@ -7,6 +7,9 @@
 .games-container{
   display: flex;
 }
+.game-container{
+  position: relative;
+}
 .info-area{
   width: 100px;
   background-color: aquamarine;
@@ -16,7 +19,6 @@
   background-color: tomato;
   color: #fff;
   padding: 15px;
-  font-size: 0;
 }
 .game{
   width: 100%;

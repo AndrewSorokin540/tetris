@@ -4,7 +4,7 @@ import './racing.css'
 class Racing extends React.Component {
     
     state = {
-        raceGoing: false,
+        gameGoing: false,
         carLocation: 0,
         barriers: [{
             x: 0,
@@ -181,7 +181,7 @@ class Racing extends React.Component {
 
     letsGo = () => {
         this.setState({
-            raceGoing: true,
+            gameGoing: true,
             carLocation: 0,
             barriers: [],
             acceleration: false,
@@ -232,7 +232,7 @@ class Racing extends React.Component {
     render() {
         let btnClassName;
 
-        if ( this.state.raceGoing ) {
+        if ( this.state.gameGoing ) {
             btnClassName = 'racing-button hidden';
         }
         else {
@@ -240,7 +240,7 @@ class Racing extends React.Component {
         }
 
         return (
-            <div className='racing-container'>
+            <div className='game-container'>
                 <span className='racing-score'>счет: {this.state.playerScore}</span>
                 <button className={ btnClassName } onClick={this.letsGo}>GO!</button>
                 <canvas id='canvas' className="game" ref="canvas" width={this.props.canvasWidth} height={this.props.canvasHeight} />
