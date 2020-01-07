@@ -6,13 +6,13 @@ class Snake extends React.Component {
     state = {
         gameGoing: false,
         cellSize: 10,
-        headPosition: {x: 0, y: 0},
-        // body: [
-        //     {x: 0, y: 0},
-        //     {x: 1, y: 0}
-        // ],
-        totalLength: 2,
-        moveDirection: 'toRight',
+        body: [
+            {x: 12, y: 15},
+            {x: 11, y: 15},
+            {x: 10, y: 15},
+            {x: 9, y: 15},
+        ],
+        moveDirection: 'toTop',
         speed: 1,
         score: 0,
     }
@@ -23,18 +23,16 @@ class Snake extends React.Component {
 
         const canvasWidth = canvas.width;             // ширина канваса
         const canvasHeight = canvas.height;           // высота канваса
-        const { headPosition, body, cellSize } = this.state;
+        const { body, cellSize } = this.state;
 
         // очищаем канвас
         ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-
-        // рисуем голову
-        ctx.fillRect( headPosition.x*cellSize,headPosition.y*cellSize,cellSize,cellSize );
-        // рисуем тело
-        // ctx.fillStyle = 'brown';
-        // for( let item of body ){
-        //     ctx.fillRect( item.x*cellSize,item.y*cellSize,cellSize,cellSize );
-        // }
+        
+        // рисуем змею
+        for (let item of body) {
+            ctx.fillRect( item.x*cellSize,item.y*cellSize,cellSize,cellSize );
+        }
+        
     }
 
     changeMoveDirection() {
@@ -63,57 +61,67 @@ class Snake extends React.Component {
     }
 
     moveSnake = () => {
-        const { headPosition, moveDirection } = this.state;
-        const canvas = document.getElementById('canvas');
+        const { body, moveDirection } = this.state;
+
+        const prevBody = body;
+        let newBody = [];
 
         switch ( moveDirection ) {
             case 'toRight':
-                if ( headPosition.x >= canvas.width/10 ) {
-                    this.setState({
-                        headPosition: {x: 0, y: headPosition.y }
-                    })
+                const toRight_headX = prevBody[0].x+1;
+                const toRight_headY = prevBody[0].y;
+                newBody[0] = {
+                    x: toRight_headX,
+                    y: toRight_headY
                 }
-                else{
-                    this.setState({
-                        headPosition: {x: headPosition.x+1, y: headPosition.y }
-                    })
+                for (let i = 1; i < body.length; i++) {
+                    newBody[i] = prevBody[i - 1]
                 }
+                this.setState({
+                    body: newBody
+                })
             break;
             case 'toTop':
-                if ( headPosition.y <= 0 ) {
-                    this.setState({
-                        headPosition: {x: headPosition.x, y: canvas.height/10 }
-                    })
+                const toTop_headX = prevBody[0].x;
+                const toTop_headY = prevBody[0].y-1;
+                newBody[0] = {
+                    x: toTop_headX,
+                    y: toTop_headY
                 }
-                else{
-                    this.setState({
-                        headPosition: {x: headPosition.x, y: headPosition.y-1 }
-                    })
+                for (let i = 1; i < body.length; i++) {
+                    newBody[i] = prevBody[i - 1]
                 }
+                this.setState({
+                    body: newBody
+                })
             break;
             case 'toLeft':
-                if ( headPosition.x <= 0 ) {
-                    this.setState({
-                        headPosition: {x: canvas.width/10, y: headPosition.y }
-                    })
+                const toLeft_headX = prevBody[0].x-1;
+                const toLeft_headY = prevBody[0].y;
+                newBody[0] = {
+                    x: toLeft_headX,
+                    y: toLeft_headY
                 }
-                else{
-                    this.setState({
-                        headPosition: {x: headPosition.x-1, y: headPosition.y }
-                    })
+                for (let i = 1; i < body.length; i++) {
+                    newBody[i] = prevBody[i - 1]
                 }
+                this.setState({
+                    body: newBody
+                })
             break;
             case 'toBottom':
-                if ( headPosition.y >= canvas.height/10 ) {
-                    this.setState({
-                        headPosition: {x: headPosition.x, y: 0 }
-                    })
+                const toBottom_headX = prevBody[0].x;
+                const toBottom_headY = prevBody[0].y+1;
+                newBody[0] = {
+                    x: toBottom_headX,
+                    y: toBottom_headY
                 }
-                else{
-                    this.setState({
-                        headPosition: {x: headPosition.x, y: headPosition.y+1 }
-                    })
+                for (let i = 1; i < body.length; i++) {
+                    newBody[i] = prevBody[i - 1]
                 }
+                this.setState({
+                    body: newBody
+                })
             break;
         }
     }
@@ -122,7 +130,8 @@ class Snake extends React.Component {
         this.setState({
             gameGoing: true
         })
-        this.intervalAdd = setInterval(() => this.moveSnake(), 50); 
+        this.intervalAdd = setInterval(() => this.moveSnake(), 100); 
+        this.moveSnake();
         this.changeMoveDirection();
     }
 
@@ -136,10 +145,10 @@ class Snake extends React.Component {
         let btnClassName;
 
         if ( this.state.gameGoing ) {
-            btnClassName = 'racing-button hidden';
+            btnClassName = '';
         }
         else {
-            btnClassName = 'racing-button';
+            btnClassName = '';
         }
 
         return (
