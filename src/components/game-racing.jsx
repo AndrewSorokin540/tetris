@@ -55,7 +55,8 @@ class Racing extends React.Component {
                     && barriers[i].x < carLocation + carWidth * cellSize
                 ) {
                 this.setState({
-                    crash: true
+                    crash: true,
+                    gameGoing: false
                 })
             }
         }
@@ -241,7 +242,7 @@ class Racing extends React.Component {
 
         return (
             <div className='game-container'>
-                <span className='racing-score'>счет: {this.state.playerScore}</span>
+                <span className="player-score">Ваш счет: {this.state.playerScore}</span>
                 <button className={ btnClassName } onClick={this.letsGo}>GO!</button>
                 <canvas id='canvas' className="game" ref="canvas" width={this.props.canvasWidth} height={this.props.canvasHeight} />
             </div>

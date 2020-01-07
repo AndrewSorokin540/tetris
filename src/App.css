@@ -18,7 +18,7 @@
 .games-area{
   background-color: tomato;
   color: #fff;
-  padding: 15px;
+  padding: 30px 15px 15px;
 }
 .game{
   width: 100%;
@@ -26,4 +26,12 @@
 }
 .hidden{
   display: none !important;
+}
+.player-score{
+  position: absolute;
+  top: -25px;
+  left: 0;
+}
+.no-cursor{
+  cursor: none;
 }

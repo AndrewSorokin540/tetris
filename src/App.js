@@ -10,8 +10,8 @@ function App() {
     <div className="App">
       <div className="games-container">
         <div className="games-area">
-          {/*<Racing canvasWidth={300} canvasHeight={300} cellSize={10} />*/}
-          <Snake canvasWidth={250} canvasHeight={250} />
+          {/* <Racing canvasWidth={280} canvasHeight={280} cellSize={10} /> */}
+          <Snake canvasWidth={280} canvasHeight={280} />
         </div>
       </div>
     </div>
