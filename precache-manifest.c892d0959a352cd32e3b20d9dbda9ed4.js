@@ -1,11 +1,11 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "dc13a7e8903c7e3feb970a70f2d2c12b",
+    "revision": "33c82db23fd79a83c233148096da0ced",
     "url": "/tetris/index.html"
   },
   {
-    "revision": "6d6f2db6dddbfc513528",
-    "url": "/tetris/static/css/main.fb218a2b.chunk.css"
+    "revision": "ee0b2ffc9b71efd8d985",
+    "url": "/tetris/static/css/main.7c596605.chunk.css"
   },
   {
     "revision": "63e3a10195878b00a6d5",
@@ -16,7 +16,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/tetris/static/js/2.1f8dc665.chunk.js.LICENSE"
   },
   {
-    "revision": "6d6f2db6dddbfc513528",
+    "revision": "ee0b2ffc9b71efd8d985",
     "url": "/tetris/static/js/main.024c9f7f.chunk.js"
   },
   {
