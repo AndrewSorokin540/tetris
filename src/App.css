@@ -30,7 +30,6 @@
   display: flex;
 }
 .router-links a{
-  margin-right: 10px;
   background-color: tomato;
   border: none;
   color: #fff;
@@ -40,6 +39,9 @@
   text-decoration: none;
   flex-grow: 1;
   text-align: center;
+}
+.router-links a:not(:last-child){
+  margin-right: 10px;
 }
 
 .router-links a:hover{
