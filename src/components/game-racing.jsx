@@ -1,14 +1,17 @@
 import React from 'react';
-import './racing.css'
 
-class Racing extends React.Component {
+export default class Racing extends React.Component {
+
+    cellSize = 10; // размер ячейки
+    canvasWidth = this.props.canvasWidth;
+    canvasHeight= this.props.canvasHeight;
     
     state = {
         gameGoing: false,
         carLocation: 0,
         barriers: [{
             x: 0,
-            y: Math.floor((Math.floor(Math.random()*this.props.canvasWidth))/this.props.cellSize)*this.props.cellSize
+            y: Math.floor((Math.floor(Math.random()*this.canvasWidth))/this.cellSize)*this.cellSize
         }],
         acceleration: false,
         crash: false,
@@ -22,25 +25,23 @@ class Racing extends React.Component {
     }
 
     moveBarriers = () => {
-        const canvas = document.getElementById('canvas');
         const { barriers, acceleration, carLocation, carWidth, carHeight, speed, playerScore } = this.state;
-        const { cellSize } = this.props;
+        const { cellSize, canvasWidth, canvasHeight } = this;
 
         // определяем положение каджого барьера
         for (let i = 0; i < barriers.length; i++) {
 
             // если барьер доехал до нижнего края, перемещаем его наверх с новой случайной координатой Х
-            if ( barriers[i].y > canvas.height) {
+            if ( barriers[i].y > canvasHeight) {
                 this.setState({
                     playerScore: playerScore+1
                 });
-                console.log(this.state.playerScore);
                 barriers[i].y = 0;
-                barriers[i].x = Math.floor((Math.floor(Math.random()*canvas.width))/this.props.cellSize)*this.props.cellSize;
+                barriers[i].x = Math.floor((Math.floor(Math.random()*canvasWidth))/cellSize)*cellSize;
                 
             }
 
-            // определяем скорость движения (с ускорением или без) с помощью флага acceleration из state
+            // определяем скорость движения (с ускорением или без) с помощью acceleration из state
             if ( !acceleration ) {
                 barriers[i].y = barriers[i].y + speed;
             }
@@ -50,7 +51,7 @@ class Racing extends React.Component {
             
             // проверяем наезд машины на барьер
             if (
-                    barriers[i].y >= canvas.height - carHeight * cellSize
+                    barriers[i].y >= canvasHeight - carHeight * cellSize
                     && barriers[i].x >= carLocation 
                     && barriers[i].x < carLocation + carWidth * cellSize
                 ) {
@@ -90,14 +91,14 @@ class Racing extends React.Component {
         }
     }
 
-    steeringWheel = () => {
-        const { cellSize } = this.props;
+    steeringWheel = () => {     // рулевое колесо
+        const { cellSize } = this;
         document.onkeydown = (event) => {
             switch (event.keyCode) {
                 case 37:
                     if ( !this.state.carOnTheLeft ) {
                         this.setState({
-                            carLocation: this.state.carLocation - (+cellSize)
+                            carLocation: this.state.carLocation - cellSize
                         })
                     }
                 break;
@@ -105,7 +106,7 @@ class Racing extends React.Component {
                 case 39:
                     if ( !this.state.carOnTheRight ) {
                         this.setState({
-                            carLocation: this.state.carLocation + (+cellSize)
+                            carLocation: this.state.carLocation + cellSize
                         })
                     }
                 break;
@@ -136,13 +137,10 @@ class Racing extends React.Component {
     }
 
     drawFrame( carLocation, barriers ) {
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
+        const ctx = document.getElementById('canvas').getContext('2d');
 
-        const canvasWidth = canvas.width;             // ширина канваса
-        const canvasHeight = canvas.height;           // высота канваса
-        const { cellSize } = this.props;              // размер ячейки
-        const { carWidth, carHeight } = this.state;   // ширина/длина машины
+        const { carWidth, carHeight } = this.state;
+        const { cellSize, canvasWidth, canvasHeight } = this;
 
         // очищаем канвас перед отрисовкой нового фрейма
         ctx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -211,12 +209,25 @@ class Racing extends React.Component {
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
 
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
         var img = new Image();
         img.src = 'https://image.freepik.com/vector-gratis/bubble-pop-art-of-crash-icon-comunicacion-comica-retro-tema-expresion_18591-10094.jpg';
 
         img.onload = function(){
             ctx.drawImage(img,0,0,canvas.width,canvas.height);
         };
+    }
+
+    componentDidMount() {
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        ctx.font = "18px arial";
+        const startText = 'Для начала нажмите "GO!"'
+        const textPositionHorizintally = canvas.width/2 - ctx.measureText(startText).width/2
+        ctx.fillText(startText, textPositionHorizintally, canvas.height/2);
+        
     }
 
     componentDidUpdate() {
@@ -230,24 +241,34 @@ class Racing extends React.Component {
         }
     }
 
+    componentWillUnmount() {
+        clearInterval(this.intervalMove);
+        clearInterval(this.intervalAdd);
+        clearInterval(this.intervalSpeed);
+    }
+
     render() {
         let btnClassName;
+        let canvasClassName;
 
         if ( this.state.gameGoing ) {
-            btnClassName = 'racing-button hidden';
+            btnClassName = 'start-button hidden';
+            canvasClassName = 'game no-cursor';
         }
         else {
-            btnClassName = 'racing-button';
+            btnClassName = 'start-button';
+            canvasClassName = 'game';
         }
 
         return (
-            <div className='game-container'>
-                <span className="player-score">Ваш счет: {this.state.playerScore}</span>
+            <React.Fragment>
+                <div className='game-header'>
+                    <span>Игра: Гонки</span>
+                    <span className="player-score">Ваш счет: {this.state.playerScore}</span>
+                </div>
                 <button className={ btnClassName } onClick={this.letsGo}>GO!</button>
-                <canvas id='canvas' className="game" ref="canvas" width={this.props.canvasWidth} height={this.props.canvasHeight} />
-            </div>
+                <canvas id='canvas' className={canvasClassName} ref="canvas" width={this.props.canvasWidth} height={this.props.canvasHeight} />
+            </React.Fragment>
         );
     }
 }
-
-export default Racing;

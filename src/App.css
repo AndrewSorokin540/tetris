@@ -4,21 +4,16 @@
   align-items: center;
   height: 100vh;
 }
-.games-container{
-  display: flex;
-}
-.game-container{
-  position: relative;
-}
 .info-area{
   width: 100px;
   background-color: aquamarine;
   padding: 15px;
 }
-.games-area{
+.game-area:not(:empty){
   background-color: tomato;
   color: #fff;
-  padding: 30px 15px 15px;
+  padding: 15px;
+  position: relative;
 }
 .game{
   width: 100%;
@@ -27,11 +22,49 @@
 .hidden{
   display: none !important;
 }
-.player-score{
-  position: absolute;
-  top: -25px;
-  left: 0;
-}
 .no-cursor{
   cursor: none;
+}
+.router-links{
+  margin-bottom: 10px;
+  display: flex;
+}
+.router-links a{
+  margin-right: 10px;
+  background-color: tomato;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  padding: 5px 10px;
+  cursor: pointer;
+  text-decoration: none;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.router-links a:hover{
+  text-decoration: underline;
+}
+
+.start-button{
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, -50%);
+  background-color: tomato;
+  color: #fff;
+  border: none;
+  font-size: 20px;
+  padding: 10px 20px;
+}
+
+.game-header{
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  top: -7px;
+}
+
+.game{
+  background-color: #eee;
 }
