@@ -16,13 +16,13 @@ function App() {
             <Link to="/racing">Гонки</Link>
           </div>
           <div className="game-area">
-            <Route path='/tetris' exact render={() => <h2>Выберите игру</h2>}/>
+            <Route path='/' exact render={() => <h2>Выберите игру</h2>}/>
             <Route
-              path='/tetris/racing'
+              path='/racing'
               render={() => <Racing canvasWidth={280} canvasHeight={280} />}
             />
             <Route
-              path='/tetris/snake'
+              path='/snake'
               render={() => <Snake canvasWidth={280} canvasHeight={280} />}
             />
           </div>
