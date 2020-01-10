@@ -1,14 +1,21 @@
 import React from 'react';
 
+import { getRandom } from '../methods'
+
 export default class Snake extends React.Component {
 
     cellSize = 10; // размер ячейки
     canvasWidth = this.props.canvasWidth;
-    canvasHeight= this.props.canvasHeight;
+    canvasHeight = this.props.canvasHeight;
+    cellNumberHorizont = this.canvasWidth/this.cellSize;    // кол-во клеток по горизонтали
+    cellNumberVertical = this.canvasHeight/this.cellSize;   // кол-во клеток по вертикали
 
     state = {
         gameGoing: false,
-        body: [],
+        body: [
+            { x: 1, y: 0 },
+            { x: 0, y: 0 },
+        ],
         apple: {},
         moveDirection: 'toRight',
         moveDirectionChanged: false,
@@ -27,16 +34,16 @@ export default class Snake extends React.Component {
 
         // очищаем канвас
         ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-        
+
         // рисуем змею
         for (let item of body) {
-            if (item === body[0]){
+            if (item === body[0]) {
                 ctx.fillStyle = 'black';
             }
-            else{
+            else {
                 ctx.fillStyle = 'brown';
             }
-            ctx.fillRect( item.x*cellSize,item.y*cellSize,cellSize,cellSize );
+            ctx.fillRect(item.x * cellSize, item.y * cellSize, cellSize, cellSize);
         }
 
         /* 
@@ -44,25 +51,25 @@ export default class Snake extends React.Component {
             и ставим яблоко на новое место
             и увеличиваем счет игрока
         */
-        if ( body[0].x === apple.x && body[0].y === apple.y) {
-            let newBody = body;
-            let newBodyPart = newBody[newBody.length-1]
+        if (body[0].x === apple.x && body[0].y === apple.y) {
+            let newBody = body.slice();
+            let newBodyPart = newBody[newBody.length - 1]
             newBody.push(newBodyPart)
-            
+
             this.setState({
                 playerScore: playerScore + 1,
-                body: newBody // если убрать это строку то ничего не изменится!!! WTF ?!?!?!  *PETYA_HELP*
+                body: newBody
             })
             this.setApple();
         }
 
         // рисуем яблоко
         ctx.fillStyle = 'green';
-        ctx.fillRect( apple.x*cellSize,apple.y*cellSize,cellSize,cellSize );
+        ctx.fillRect(apple.x * cellSize, apple.y * cellSize, cellSize, cellSize);
 
 
         // проверки на аварии
-        
+
         // врезался сам в себя
         let head = body[0];
         let bodyWithoutHead = body.slice(1);
@@ -76,47 +83,47 @@ export default class Snake extends React.Component {
         }
 
         // голова вышла за пределы канваса
-        if (head.x >= canvasWidth/10 ||
+        if (head.x >= canvasWidth / 10 ||
             head.x < 0 ||
             head.y < 0 ||
-            head.y >= canvasHeight/10 ) {
-                this.setState({
-                    crash: true,
-                    gameGoing: false
-                })
-            }
+            head.y >= canvasHeight / 10) {
+            this.setState({
+                crash: true,
+                gameGoing: false
+            })
+        }
     }
 
     changeMoveDirection() {
         document.onkeydown = (event) => {
-            if ( !this.state.moveDirectionChanged ) { // сменить направление можно только 1 раз за кадр
+            if (!this.state.moveDirectionChanged) { // сменить направление можно только 1 раз за кадр
                 switch (event.keyCode) {
                     case 37:
-                        if (this.state.moveDirection !== 'toRight'){
-                            this.setState({moveDirection: 'toLeft'})
+                        if (this.state.moveDirection !== 'toRight') {
+                            this.setState({ moveDirection: 'toLeft' })
                         }
-                    break;
-    
+                        break;
+
                     case 38:
-                        if (this.state.moveDirection !== 'toBottom'){
-                            this.setState({moveDirection: 'toTop'})
+                        if (this.state.moveDirection !== 'toBottom') {
+                            this.setState({ moveDirection: 'toTop' })
                         }
-                    break;
-    
+                        break;
+
                     case 39:
-                        if (this.state.moveDirection !== 'toLeft'){
-                            this.setState({moveDirection: 'toRight'})
+                        if (this.state.moveDirection !== 'toLeft') {
+                            this.setState({ moveDirection: 'toRight' })
                         }
-                    break;
-    
+                        break;
+
                     case 40:
-                        if (this.state.moveDirection !== 'toTop'){
-                            this.setState({moveDirection: 'toBottom'})
+                        if (this.state.moveDirection !== 'toTop') {
+                            this.setState({ moveDirection: 'toBottom' })
                         }
-                    break;
-                    
-                    default: 
-                    break;
+                        break;
+
+                    default:
+                        break;
                 }
                 this.setState({
                     moveDirectionChanged: true  // ставим стейт что направление было изменено (ставим обратно при отрисовке нового кадра)
@@ -131,9 +138,9 @@ export default class Snake extends React.Component {
         const prevBody = body;
         let newBody = [];
 
-        switch ( moveDirection ) {
+        switch (moveDirection) {
             case 'toRight':
-                const toRight_headX = prevBody[0].x+1;  // в каждом кейсе нельзя создавать переменные с одним именем (?)
+                const toRight_headX = prevBody[0].x + 1;  // в каждом кейсе нельзя создавать переменные с одним именем (?)
                 const toRight_headY = prevBody[0].y;
                 newBody[0] = {
                     x: toRight_headX,
@@ -145,10 +152,10 @@ export default class Snake extends React.Component {
                 this.setState({
                     body: newBody
                 })
-            break;
+                break;
             case 'toTop':
                 const toTop_headX = prevBody[0].x;
-                const toTop_headY = prevBody[0].y-1;
+                const toTop_headY = prevBody[0].y - 1;
                 newBody[0] = {
                     x: toTop_headX,
                     y: toTop_headY
@@ -159,9 +166,9 @@ export default class Snake extends React.Component {
                 this.setState({
                     body: newBody
                 })
-            break;
+                break;
             case 'toLeft':
-                const toLeft_headX = prevBody[0].x-1;
+                const toLeft_headX = prevBody[0].x - 1;
                 const toLeft_headY = prevBody[0].y;
                 newBody[0] = {
                     x: toLeft_headX,
@@ -173,10 +180,10 @@ export default class Snake extends React.Component {
                 this.setState({
                     body: newBody
                 })
-            break;
+                break;
             case 'toBottom':
                 const toBottom_headX = prevBody[0].x;
-                const toBottom_headY = prevBody[0].y+1;
+                const toBottom_headY = prevBody[0].y + 1;
                 newBody[0] = {
                     x: toBottom_headX,
                     y: toBottom_headY
@@ -187,10 +194,10 @@ export default class Snake extends React.Component {
                 this.setState({
                     body: newBody
                 })
-            break;
+                break;
 
             default:
-            break;
+                break;
         }
         this.setState({
             moveDirectionChanged: false // теперь можно снова сменить направление движения
@@ -198,10 +205,11 @@ export default class Snake extends React.Component {
     }
 
     setApple() {
+        const { cellNumberHorizont, cellNumberVertical } = this;
         this.setState({
             apple: {
-                x: Math.floor((Math.floor(Math.random()*this.canvasWidth))/10),
-                y: Math.floor((Math.floor(Math.random()*this.canvasWidth))/10),
+                x: getRandom(0, cellNumberHorizont - 1),
+                y: getRandom(0, cellNumberHorizont - 1),
             }
         })
     }
@@ -210,8 +218,8 @@ export default class Snake extends React.Component {
         this.setState({
             gameGoing: true,
             body: [
-                {x: 1, y: 0},
-                {x: 0, y: 0},
+                { x: 1, y: 0 },
+                { x: 0, y: 0 },
             ],
             moveDirection: 'toRight',
             playerScore: 0,
@@ -219,7 +227,7 @@ export default class Snake extends React.Component {
             uroboros: false
         })
         this.setApple();
-        this.intervalAdd = setInterval(() => this.moveSnake(), 100); 
+        this.intervalAdd = setInterval(() => this.moveSnake(), 100);
         this.changeMoveDirection();
     }
 
@@ -236,32 +244,29 @@ export default class Snake extends React.Component {
         if (uroboros) {
             const img = new Image();
             img.src = 'https://cdn1.radikalno.ru/uploads/2020/1/7/1b7f7d18cc6f6e4d6c13401e8c2c6cfe-full.png';
-    
-            img.onload = function(){
-                ctx.drawImage(img,0,0,canvas.width,canvas.height);
+
+            img.onload = function () {
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             };
         }
 
         let evaluation;
-        if ( playerScore === 0 ) {
-            evaluation = 'без комментариев...'
-        }
-        else if ( playerScore > 0 && playerScore < 10 ) {
+        if (playerScore >= 0 && playerScore < 10) {
             evaluation = 'мало...'
         }
-        else if ( playerScore >= 10 && playerScore < 20 ) {
+        else if (playerScore >= 10 && playerScore < 20) {
             evaluation = 'Нормально'
         }
-        else if ( playerScore >= 20 && playerScore < 30) {
+        else if (playerScore >= 20 && playerScore < 30) {
             evaluation = 'Неплохо!'
         }
-        else if ( playerScore >= 30 ) {
+        else if (playerScore >= 30) {
             evaluation = 'Круто!'
         }
 
         const txt = `Ваш счет: ${playerScore}`
-        ctx.fillText(txt ,canvas.width/2 - ctx.measureText(txt).width/2, canvas.height/2)
-        ctx.fillText(evaluation ,canvas.width/2 - ctx.measureText(evaluation).width/2, canvas.height/2+20)
+        ctx.fillText(txt, canvas.width / 2 - ctx.measureText(txt).width / 2, canvas.height / 2)
+        ctx.fillText(evaluation, canvas.width / 2 - ctx.measureText(evaluation).width / 2, canvas.height / 2 + 20)
     }
 
     componentDidMount() {
@@ -270,9 +275,9 @@ export default class Snake extends React.Component {
 
         ctx.font = "18px arial";
         const startText = 'Для начала нажмите "GO!"'
-        const textPositionHorizintally = canvas.width/2 - ctx.measureText(startText).width/2
-        ctx.fillText(startText, textPositionHorizintally, canvas.height/2);
-        
+        const textPositionHorizintally = canvas.width / 2 - ctx.measureText(startText).width / 2
+        ctx.fillText(startText, textPositionHorizintally, canvas.height / 2);
+
     }
 
     componentDidUpdate() {
@@ -292,7 +297,7 @@ export default class Snake extends React.Component {
         let btnClassName;
         let canvasClassName;
 
-        if ( this.state.gameGoing ) {
+        if (this.state.gameGoing) {
             btnClassName = 'start-button hidden';
             canvasClassName = 'game no-cursor';
         }
@@ -301,7 +306,7 @@ export default class Snake extends React.Component {
             canvasClassName = 'game';
         }
 
-        
+
         return (
             <React.Fragment>
                 <div className='game-header'>
@@ -309,7 +314,7 @@ export default class Snake extends React.Component {
                     <span className="player-score">Ваш счет: {this.state.playerScore}</span>
                 </div>
                 <canvas id='canvas' className={canvasClassName} ref="canvas" width={this.props.canvasWidth} height={this.props.canvasHeight} />
-                <button className={ btnClassName } onClick={this.letsGo}>GO!</button>
+                <button className={btnClassName} onClick={this.letsGo}>GO!</button>
             </React.Fragment>
         );
     }
