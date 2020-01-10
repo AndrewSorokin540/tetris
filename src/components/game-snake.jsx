@@ -205,6 +205,27 @@ export default class Snake extends React.Component {
         })
     }
 
+    mobileChangeDirectionLeft = () => {
+        if (this.state.moveDirection !== 'toRight') {
+            this.setState({ moveDirection: 'toLeft' })
+        }
+    }
+    mobileChangeDirectionRight = () => {
+        if (this.state.moveDirection !== 'toLeft') {
+            this.setState({ moveDirection: 'toRight' })
+        }
+    }
+    mobileChangeDirectionTop = () => {
+        if (this.state.moveDirection !== 'toBottom') {
+            this.setState({ moveDirection: 'toTop' })
+        }
+    }
+    mobileChangeDirectionBottom = () => {
+        if (this.state.moveDirection !== 'toTop') {
+            this.setState({ moveDirection: 'toBottom' })
+        }
+    }
+
     setApple() {
         const { cellNumberHorizont } = this;
         this.setState({
@@ -317,6 +338,12 @@ export default class Snake extends React.Component {
                     <span className="player-score">Ваш счет: {this.state.playerScore}</span>
                 </div>
                 <canvas id='canvas' className={canvasClassName} ref="canvas" width={this.props.canvasWidth} height={this.props.canvasHeight} />
+                <div className="mobile-buttons">
+                    <button className='mobile-visible left' onClick={this.mobileChangeDirectionLeft}>L</button>
+                    <button className='mobile-visible top' onClick={this.mobileChangeDirectionTop}>T</button>
+                    <button className='mobile-visible right' onClick={this.mobileChangeDirectionRight}>R</button>
+                    <button className='mobile-visible bottom' onClick={this.mobileChangeDirectionBottom}>B</button>
+                </div>
                 <button className={btnClassName} onClick={this.letsGo}>GO!</button>
             </React.Fragment>
         );

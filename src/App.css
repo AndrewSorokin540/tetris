@@ -70,3 +70,53 @@
 .game{
   background-color: #eee;
 }
+.mobile-buttons{
+  display: none;
+}
+@media screen and (max-width: 767px) {
+  .game-area:not(:empty){
+    padding-bottom: 200px;
+  }
+  .mobile-buttons{
+    display: block;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    height: 150px;
+    bottom: 0;
+  }
+  .mobile-visible{
+    display: block;
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border: none;
+    background: #fff;
+    color: tomato;
+    font-size: 22px;
+  }
+  .left{
+    left: 15px;
+    top: calc(50% - 15px);
+    transform: translateY(-50%);
+  }
+  .right{
+    right: 15px;
+    top: calc(50% - 15px);
+    transform: translateY(-50%);
+  }
+  .top{
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .bottom{
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .start-button{
+    top: 50%;
+    bottom: auto;
+  }
+}

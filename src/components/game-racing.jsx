@@ -134,10 +134,6 @@ export default class Racing extends React.Component {
         }
     }
 
-    listener = (event) => {
-        console.log(1)
-      };
-
     drawFrame( carLocation, barriers ) {
         const ctx = document.getElementById('canvas').getContext('2d');
 
@@ -237,6 +233,22 @@ export default class Racing extends React.Component {
         window.addEventListener('keydown', this.steeringWheelDown);
         window.addEventListener('keyup', this.steeringWheelUp);
     }
+    
+    mobileLeft = () => {
+        if ( !this.state.carOnTheLeft ) {
+            this.setState({
+                carLocation: this.state.carLocation - 1
+            })
+        }
+    }
+
+    mobileRight = () => {
+        if ( !this.state.carOnTheRight ) {
+            this.setState({
+                carLocation: this.state.carLocation + 1
+            })
+        }
+    }
 
     componentDidUpdate() {
         const { carLocation, barriers } = this.state;
@@ -278,6 +290,10 @@ export default class Racing extends React.Component {
                 </div>
                 <button className={ btnClassName } onClick={this.letsGo}>GO!</button>
                 <canvas id='canvas' className={canvasClassName} ref="canvas" width={this.props.canvasWidth} height={this.props.canvasHeight} />
+                <div className="mobile-buttons">
+                    <button className='mobile-visible left' onClick={this.mobileLeft}>L</button>
+                    <button className='mobile-visible right' onClick={this.mobileRight}>R</button>
+                </div>
             </React.Fragment>
         );
     }
