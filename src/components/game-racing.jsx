@@ -6,17 +6,13 @@ export default class Racing extends React.Component {
 
     cellSize = 10; // размер ячейки
     canvasWidth = this.props.canvasWidth;
-    canvasHeight = this.props.canvasHeight;
+    canvasHeight= this.props.canvasHeight;
     cellNumberHorizont = this.canvasWidth/this.cellSize;    // кол-во клеток по горизонтали
-    cellNumberVertical = this.canvasHeight/this.cellSize;   // кол-во клеток по вертикали
-
+    
     state = {
         gameGoing: false,
         carLocation: 0,
-        barriers: [{
-            x: getRandom(0, this.cellNumberHorizont-1),
-            y: 0
-        }],
+        barriers: [],
         acceleration: false,
         crash: false,
         carOnTheLeft: true,
@@ -30,41 +26,42 @@ export default class Racing extends React.Component {
 
     moveBarriers = () => {
         const { barriers, acceleration, carLocation, carWidth, carHeight, speed, playerScore } = this.state;
-        const { cellSize, canvasWidth, canvasHeight, cellNumberHorizont } = this;
+        const { cellSize, canvasHeight, cellNumberHorizont } = this;
 
         // определяем положение каджого барьера
         for (let i = 0; i < barriers.length; i++) {
 
             // если барьер доехал до нижнего края, перемещаем его наверх с новой случайной координатой Х
-            if (barriers[i].y > canvasHeight) {
+            if ( barriers[i].y > canvasHeight) {
                 this.setState({
-                    playerScore: playerScore + 1
+                    playerScore: playerScore+1
                 });
                 barriers[i].y = 0;
-                barriers[i].x = getRandom(0, this.cellNumberHorizont-1);
+                barriers[i].x = getRandom(0, cellNumberHorizont - 1);
+                
             }
 
             // определяем скорость движения (с ускорением или без) с помощью acceleration из state
-            if (!acceleration) {
+            if ( !acceleration ) {
                 barriers[i].y = barriers[i].y + speed;
             }
-            else {
+            else  {
                 barriers[i].y = barriers[i].y + speed + 20;
             }
-
+            
             // проверяем наезд машины на барьер
             if (
-                barriers[i].y >= canvasHeight - carHeight * cellSize
-                && barriers[i].x >= carLocation
-                && barriers[i].x < carLocation + carWidth * cellSize
-            ) {
+                    barriers[i].y >= canvasHeight - carHeight * cellSize
+                    && barriers[i].x >= carLocation 
+                    && barriers[i].x < carLocation + carWidth
+                ) {
                 this.setState({
                     crash: true,
                     gameGoing: false
                 })
             }
         }
-
+        
         // ставим барьры в новые положения
         this.setState({
             barriers: barriers
@@ -72,12 +69,13 @@ export default class Racing extends React.Component {
     }
 
     addBarrier = () => {
+        const { cellNumberHorizont } = this;
         const { barriers, maxBarriersAmount } = this.state;
 
-        if (barriers.length < maxBarriersAmount) {
+        if( barriers.length < maxBarriersAmount ) {
             barriers.push(
                 {
-                    x: Math.floor((Math.floor(Math.random() * 250)) / 10) * 10,
+                    x: getRandom(0, cellNumberHorizont - 1),
                     y: 0
                 }
             )
@@ -87,59 +85,60 @@ export default class Racing extends React.Component {
     upSpeed = () => {
         const { speed } = this.state;
 
-        if (speed < 50) {
+        if( speed < 50 ) {
             this.setState({
                 speed: speed + 1
             })
         }
     }
 
-    steeringWheel = () => {     // рулевое колесо
-        const { cellSize } = this;
-        document.onkeydown = (event) => {
-            switch (event.keyCode) {
-                case 37:
-                    if (!this.state.carOnTheLeft) {
-                        this.setState({
-                            carLocation: this.state.carLocation - cellSize
-                        })
-                    }
-                    break;
-
-                case 39:
-                    if (!this.state.carOnTheRight) {
-                        this.setState({
-                            carLocation: this.state.carLocation + cellSize
-                        })
-                    }
-                    break;
-
-                case 38:
+    steeringWheelDown = (event) => {     // рулевое колесо
+        switch (event.keyCode) {
+            case 37:
+                if ( !this.state.carOnTheLeft ) {
                     this.setState({
-                        acceleration: true
+                        carLocation: this.state.carLocation - 1
                     })
-                    break;
+                }
+            break;
 
-                default:
-                    break;
-            }
-        };
-        document.onkeyup = (event) => {
-            switch (event.keyCode) {
-                case 38:
+            case 39:
+                if ( !this.state.carOnTheRight ) {
                     this.setState({
-                        acceleration: false
+                        carLocation: this.state.carLocation + 1
                     })
-                    break;
+                }
+            break;
 
-                default:
-                    break;
-            }
-        };
-
+            case 38:
+                this.setState({
+                    acceleration: true
+                })
+            break;
+            
+            default: 
+            break;
+        }
     }
 
-    drawFrame(carLocation, barriers) {
+    steeringWheelUp = (event) => {     // рулевое колесо
+        switch (event.keyCode) {
+            case 38:
+                this.setState({
+                    acceleration: false
+                })
+            break;
+
+            default: 
+            break;
+        }
+    }
+
+    listener = (event) => {
+        console.log(1)
+      };
+
+    drawFrame( carLocation, barriers ) {
         const ctx = document.getElementById('canvas').getContext('2d');
 
         const { carWidth, carHeight } = this.state;
@@ -149,32 +148,34 @@ export default class Racing extends React.Component {
         ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
         // рисуем машину
-        ctx.fillRect(carLocation, canvasHeight - carHeight * cellSize, carWidth * cellSize, canvasHeight);
+        ctx.fillStyle = 'brown';
+        ctx.fillRect( carLocation*cellSize, canvasHeight - carHeight * cellSize, carWidth * cellSize, canvasHeight );
 
         // рисуем препятствия
+        ctx.fillStyle = '#212121';
         for (let i = 0; i < this.state.barriers.length; i++) {
-            ctx.fillRect(barriers[i].x, barriers[i].y, cellSize, cellSize);
+            ctx.fillRect(barriers[i].x*cellSize,barriers[i].y,cellSize,cellSize);
         }
 
         // проверка не у левого края ли стоит машина
-        if (this.state.carLocation <= 0 && this.state.carOnTheLeft === false) {
+        if (carLocation*cellSize <= 0 && this.state.carOnTheLeft === false) {
             this.setState({
                 carOnTheLeft: true
             })
         }
-        else if (this.state.carLocation > 0 && this.state.carOnTheLeft === true) {
+        else if ( carLocation*cellSize > 0 && this.state.carOnTheLeft === true ) {
             this.setState({
                 carOnTheLeft: false
             })
         }
 
         // проверка не у правого края ли стоит машина
-        if (this.state.carLocation >= canvasWidth - carWidth * cellSize && this.state.carOnTheRight === false) {
+        if (carLocation*cellSize >= canvasWidth-carWidth*cellSize && this.state.carOnTheRight === false) {
             this.setState({
                 carOnTheRight: true
             })
         }
-        else if (this.state.carLocation < canvasWidth - carWidth * cellSize && this.state.carOnTheRight === true) {
+        else if ( carLocation*cellSize < canvasWidth-carWidth*cellSize && this.state.carOnTheRight === true ) {
             this.setState({
                 carOnTheRight: false
             })
@@ -182,10 +183,14 @@ export default class Racing extends React.Component {
     }
 
     letsGo = () => {
+        const { cellNumberHorizont } = this;
         this.setState({
             gameGoing: true,
             carLocation: 0,
-            barriers: [],
+            barriers: [{
+                x: getRandom(0, cellNumberHorizont - 1),
+                y: 0
+            }],
             acceleration: false,
             crash: false,
             carOnTheLeft: true,
@@ -196,10 +201,9 @@ export default class Racing extends React.Component {
             speed: 5,
             playerScore: 0,
         })
-        this.steeringWheel();                                             // создаем "руль"
         this.intervalMove = setInterval(() => this.moveBarriers(), 50);   // запускаем двигатель барьеров
-        this.intervalAdd = setInterval(() => this.addBarrier(), 6000);    // запускаем добавлятель барьеров
-        this.intervalSpeed = setInterval(() => this.upSpeed(), 6000);     // увеличиваем скорость
+        this.intervalAdd = setInterval(() => this.addBarrier(), 5000);    // запускаем добавлятель барьеров
+        this.intervalSpeed = setInterval(() => this.upSpeed(), 8000);     // увеличиваем скорость
     }
 
     crash() {
@@ -217,8 +221,8 @@ export default class Racing extends React.Component {
         var img = new Image();
         img.src = 'https://image.freepik.com/vector-gratis/bubble-pop-art-of-crash-icon-comunicacion-comica-retro-tema-expresion_18591-10094.jpg';
 
-        img.onload = function () {
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        img.onload = function(){
+            ctx.drawImage(img,0,0,canvas.width,canvas.height);
         };
     }
 
@@ -228,16 +232,17 @@ export default class Racing extends React.Component {
 
         ctx.font = "18px arial";
         const startText = 'Для начала нажмите "GO!"'
-        const textPositionHorizintally = canvas.width / 2 - ctx.measureText(startText).width / 2
-        ctx.fillText(startText, textPositionHorizintally, canvas.height / 2);
-
+        const textPositionHorizintally = canvas.width/2 - ctx.measureText(startText).width/2
+        ctx.fillText(startText, textPositionHorizintally, canvas.height/2);
+        window.addEventListener('keydown', this.steeringWheelDown);
+        window.addEventListener('keyup', this.steeringWheelUp);
     }
 
     componentDidUpdate() {
         const { carLocation, barriers } = this.state;
 
         if (!this.state.crash) {
-            this.drawFrame(carLocation, barriers);
+            this.drawFrame( carLocation, barriers );
         }
         else {
             this.crash();
@@ -248,13 +253,15 @@ export default class Racing extends React.Component {
         clearInterval(this.intervalMove);
         clearInterval(this.intervalAdd);
         clearInterval(this.intervalSpeed);
+        window.removeEventListener('keydown', this.steeringWheelDown);
+        window.removeEventListener('keyup', this.steeringWheelUp);
     }
 
     render() {
         let btnClassName;
         let canvasClassName;
 
-        if (this.state.gameGoing) {
+        if ( this.state.gameGoing ) {
             btnClassName = 'start-button hidden';
             canvasClassName = 'game no-cursor';
         }
@@ -269,7 +276,7 @@ export default class Racing extends React.Component {
                     <span>Игра: Гонки</span>
                     <span className="player-score">Ваш счет: {this.state.playerScore}</span>
                 </div>
-                <button className={btnClassName} onClick={this.letsGo}>GO!</button>
+                <button className={ btnClassName } onClick={this.letsGo}>GO!</button>
                 <canvas id='canvas' className={canvasClassName} ref="canvas" width={this.props.canvasWidth} height={this.props.canvasHeight} />
             </React.Fragment>
         );

@@ -94,42 +94,43 @@ export default class Snake extends React.Component {
         }
     }
 
-    changeMoveDirection() {
-        document.onkeydown = (event) => {
-            if (!this.state.moveDirectionChanged) { // сменить направление можно только 1 раз за кадр
-                switch (event.keyCode) {
-                    case 37:
-                        if (this.state.moveDirection !== 'toRight') {
-                            this.setState({ moveDirection: 'toLeft' })
-                        }
-                        break;
+    changeMoveDirection = (event) => {
+        if (!event) {
+            return
+        }
+        if (!this.state.moveDirectionChanged) { // сменить направление можно только 1 раз за кадр
+            switch (event.keyCode) {
+                case 37:
+                    if (this.state.moveDirection !== 'toRight') {
+                        this.setState({ moveDirection: 'toLeft' })
+                    }
+                    break;
 
-                    case 38:
-                        if (this.state.moveDirection !== 'toBottom') {
-                            this.setState({ moveDirection: 'toTop' })
-                        }
-                        break;
+                case 38:
+                    if (this.state.moveDirection !== 'toBottom') {
+                        this.setState({ moveDirection: 'toTop' })
+                    }
+                    break;
 
-                    case 39:
-                        if (this.state.moveDirection !== 'toLeft') {
-                            this.setState({ moveDirection: 'toRight' })
-                        }
-                        break;
+                case 39:
+                    if (this.state.moveDirection !== 'toLeft') {
+                        this.setState({ moveDirection: 'toRight' })
+                    }
+                    break;
 
-                    case 40:
-                        if (this.state.moveDirection !== 'toTop') {
-                            this.setState({ moveDirection: 'toBottom' })
-                        }
-                        break;
+                case 40:
+                    if (this.state.moveDirection !== 'toTop') {
+                        this.setState({ moveDirection: 'toBottom' })
+                    }
+                    break;
 
-                    default:
-                        break;
-                }
-                this.setState({
-                    moveDirectionChanged: true  // ставим стейт что направление было изменено (ставим обратно при отрисовке нового кадра)
-                })
+                default:
+                    break;
             }
-        };
+            this.setState({
+                moveDirectionChanged: true  // ставим стейт что направление было изменено (ставим обратно при отрисовке нового кадра)
+            })
+        }
     }
 
     moveSnake = () => {
@@ -205,7 +206,7 @@ export default class Snake extends React.Component {
     }
 
     setApple() {
-        const { cellNumberHorizont, cellNumberVertical } = this;
+        const { cellNumberHorizont } = this;
         this.setState({
             apple: {
                 x: getRandom(0, cellNumberHorizont - 1),
@@ -277,7 +278,8 @@ export default class Snake extends React.Component {
         const startText = 'Для начала нажмите "GO!"'
         const textPositionHorizintally = canvas.width / 2 - ctx.measureText(startText).width / 2
         ctx.fillText(startText, textPositionHorizintally, canvas.height / 2);
-
+        
+        window.addEventListener('keydown', this.changeMoveDirection);
     }
 
     componentDidUpdate() {
@@ -291,6 +293,7 @@ export default class Snake extends React.Component {
 
     componentWillUnmount() {
         clearInterval(this.intervalAdd);
+        window.removeEventListener('keydown', this.changeMoveDirection);
     }
 
     render() {
