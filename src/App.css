@@ -74,6 +74,11 @@
   display: none;
 }
 @media screen and (max-width: 767px) {
+  .App{
+    align-items: flex-start;
+    padding-top: 15px;
+    height: auto;
+  }
   .game-area:not(:empty){
     padding-bottom: 200px;
   }
