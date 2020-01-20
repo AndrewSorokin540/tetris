@@ -320,6 +320,7 @@ export default class Snake extends React.Component {
     render() {
         let btnClassName;
         let canvasClassName;
+        const { gameGoing } = this.state;
 
         if (this.state.gameGoing) {
             btnClassName = 'start-button hidden';
@@ -337,14 +338,17 @@ export default class Snake extends React.Component {
                     <span>Игра: Змейка</span>
                     <span className="player-score">Ваш счет: {this.state.playerScore}</span>
                 </div>
-                <canvas id='canvas' className={canvasClassName} ref="canvas" width={this.props.canvasWidth} height={this.props.canvasHeight} />
+
+                <canvas id='canvas' className={gameGoing ? 'game no-cursor' : 'game'} ref="canvas" width={this.props.canvasWidth} height={this.props.canvasHeight} />
+
+                {!gameGoing && <button className="start-button" onClick={this.letsGo}>GO!</button>}
+
                 <div className="mobile-buttons">
                     <button className='mobile-visible left' onClick={this.mobileChangeDirectionLeft}>L</button>
                     <button className='mobile-visible top' onClick={this.mobileChangeDirectionTop}>T</button>
                     <button className='mobile-visible right' onClick={this.mobileChangeDirectionRight}>R</button>
                     <button className='mobile-visible bottom' onClick={this.mobileChangeDirectionBottom}>B</button>
                 </div>
-                <button className={btnClassName} onClick={this.letsGo}>GO!</button>
             </React.Fragment>
         );
     }

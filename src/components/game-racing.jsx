@@ -270,17 +270,7 @@ export default class Racing extends React.Component {
     }
 
     render() {
-        let btnClassName;
-        let canvasClassName;
-
-        if ( this.state.gameGoing ) {
-            btnClassName = 'start-button hidden';
-            canvasClassName = 'game no-cursor';
-        }
-        else {
-            btnClassName = 'start-button';
-            canvasClassName = 'game';
-        }
+        const { gameGoing } = this.state;
 
         return (
             <React.Fragment>
@@ -288,8 +278,11 @@ export default class Racing extends React.Component {
                     <span>Игра: Гонки</span>
                     <span className="player-score">Ваш счет: {this.state.playerScore}</span>
                 </div>
-                <button className={ btnClassName } onClick={this.letsGo}>GO!</button>
-                <canvas id='canvas' className={canvasClassName} ref="canvas" width={this.props.canvasWidth} height={this.props.canvasHeight} />
+                
+                <canvas id='canvas' className={ gameGoing ? 'game no-cursor' : 'game' } ref="canvas" width={this.props.canvasWidth} height={this.props.canvasHeight} />
+                
+                {!gameGoing && <button className="start-button" onClick={this.letsGo}>GO!</button>}
+
                 <div className="mobile-buttons">
                     <button className='mobile-visible left' onClick={this.mobileLeft}>L</button>
                     <button className='mobile-visible right' onClick={this.mobileRight}>R</button>
